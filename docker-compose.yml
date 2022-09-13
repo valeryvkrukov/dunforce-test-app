@@ -25,6 +25,23 @@ services:
     networks:
       - test-app
   
+  ui:
+    build: ./ui
+    restart: on-failure
+    command: 'yarn serve'
+    ports:
+      - 80:8080
+    depends_on:
+      - api
+    volumes:
+      - ${PWD}/ui:/var/www/ui:delegated
+      - node_modules:/var/www/ui/node_modules
+    networks:
+      - test-app
+
+volumes:
+  node_modules: {}  
+
 networks:
   test-app:
     driver: bridge
