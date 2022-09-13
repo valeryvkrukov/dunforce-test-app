@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  nginx:
+    build: docker/nginx
+    restart: on-failure
+    volumes:
+      - ${PWD}/api:/var/www/api:delegated
+      - ${PWD}/var/logs/nginx/:/var/log/nginx:delegated
+      - ${PWD}/docker/nginx/api.conf:/etc/nginx/conf.d/api.conf:delegated
+    ports:
+      - 90:80
+    depends_on:
+      - api
+      - ui
+    networks:
+      - test-app
+  
+  api:
+    build: docker/php
+    restart: on-failure
+    volumes:
+      - ${PWD}/api:/var/www/api:delegated
+      - ${PWD}/docker/php/php.ini:/usr/local/etc/php/php.ini:ro
+    networks:
+      - test-app
+  
+networks:
+  test-app:
+    driver: bridge
